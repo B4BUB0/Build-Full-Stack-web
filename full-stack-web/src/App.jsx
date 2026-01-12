@@ -21,7 +21,14 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
 
-  useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm])
+  // Remove the useDebounce import and line. Use this instead:
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   const fetchMovies = async (query = '') => {
     setIsLoading(true);
@@ -39,8 +46,8 @@ const App = () => {
       }
       const data = await response.json();
 
-      if(data.Response === 'False' ) {
-        setErrorMessage(data.Error || 'Failed to fetch movies');
+      if (data.success === false) {
+        setErrorMessage(data.status_message || 'Failed to fetch movies');
         setMovieList([]);
         return;
       }
