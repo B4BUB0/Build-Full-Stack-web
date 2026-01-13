@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react'
 import Search from './components/Search.jsx'
 import MovieCard from './components/MovieCard.jsx';
 import {useDebounce} from 'react-use'
-import { updateSearchCount } from './appwrite.js';
 import { getTrendingMovies, updateSearchCount } from './appwrite.js';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
@@ -81,6 +80,10 @@ const App = () => {
     fetchMovies(debouncedSearchTerm);
   },[debouncedSearchTerm]);
 
+  useEffect(() => {
+    loadTrendingMovies();
+  },[]);
+
  return (
     <main>
       <div className="pattern"/>
@@ -92,6 +95,21 @@ const App = () => {
 
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </header>
+
+        {trendingMovies.length > 0 && (
+          <section className='trending'>
+            <h2>Trending Movies Today</h2>
+
+            <ul>
+              {trendingMovies.map((movie, index) => (
+                <li key={movie.$id}>
+                  <p>{index + 1} </p>
+                  <img src={movie.poster_url} alt={movie.title}/>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="all-movies">
           <h2>All Movies</h2>
