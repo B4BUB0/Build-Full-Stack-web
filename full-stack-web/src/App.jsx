@@ -3,6 +3,7 @@ import Search from './components/Search.jsx'
 import MovieCard from './components/MovieCard.jsx';
 import {useDebounce} from 'react-use'
 import { updateSearchCount } from './appwrite.js';
+import { getTrendingMovies, updateSearchCount } from './appwrite.js';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -19,6 +20,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [movieList, setMovieList] = useState([]);
+  const [trendingMovies, setTrendingMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
 
@@ -62,6 +64,16 @@ const App = () => {
       console.error('Error fetching movies: Please try again later');
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies();
+
+      setTrendingMovies(movies);
+      } catch (error) {
+      console.error(`Error fetching trending movies: ${error}`);
     }
   }
 
